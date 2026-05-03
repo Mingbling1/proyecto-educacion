@@ -1,0 +1,723 @@
+:root {
+  --bg-dark: #f1f5f9; /* Slate 100 - Fondo principal claro */
+  --bg-panel: #ffffff; /* Blanco puro para paneles */
+  --bg-hover: #e2e8f0; /* Slate 200 */
+  --grid-line: rgba(0, 0, 0, 0.05); /* Cuadrícula oscura muy sutil */
+  --blueprint-line: #94a3b8;
+  --axis-line: rgba(0, 0, 0, 0.2);
+  --pure-white: #0f172a; /* Invertido: Texto/iconos oscuros principales */
+  --glow-white: rgba(0, 0, 0, 0.2); /* Sombra oscura suave en vez de resplandor blanco */
+  --text-main: #1e293b; /* Texto oscuro principal */
+  --text-muted: #64748b; /* Texto secundario gris */
+  --border-color: #cbd5e1; /* Bordes suaves */
+  
+  /* Accent color default */
+  --current-accent: var(--pure-white);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.main-header {
+  height: 80px;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom-color: var(--border-color);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  z-index: 10;
+}
+
+.main-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #0095B6; /* Azul bondi */
+}
+
+.main-header p {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: #0047AB; /* Azul cobalto */
+  font-weight: 600;
+  margin-top: 0.3rem;
+  transition: color 0.5s ease;
+}
+
+.dashboard {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+/* Columna Izquierda: Modelo */
+.model-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  position: relative;
+  border-right: 1px solid var(--border-color);
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(circle at 50% 40%, #ffffff 0%, transparent 65%),
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  overflow: hidden; /* Evita que el zoom invada el panel derecho */
+}
+
+#anatomy-svg {
+  height: 95%;
+  max-width: 100%;
+  overflow: visible;
+}
+
+#zoom-group {
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.silhouette-img {
+  mix-blend-mode: multiply; /* En modo claro, oculta el blanco y deja lo negro */
+  filter: grayscale(1) invert(1) brightness(1.2) contrast(1.1); /* Invertir imagen oscura a clara */
+  opacity: 0.6; /* Un poco menos opaco para no saturar el fondo claro */
+  transition: opacity 0.8s ease;
+}
+
+.focus-ring {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.4); /* Slate 400 */
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.focus-ring.inner {
+  stroke: rgba(148, 163, 184, 0.2);
+  stroke-dasharray: 4 4;
+}
+
+body.gender-male .female-silhouette {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+body.gender-female .male-silhouette {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+
+body.gender-male .female-only {
+  display: none !important;
+}
+body.gender-female .male-only {
+  display: none !important;
+}
+
+.anatomy-label {
+  position: absolute;
+  top: 0.5rem;
+  right: 2rem; /* Alineado con el botón de género */
+  color: #00a86b; /* Verde Jade */
+  font-family: 'Outfit', sans-serif; /* Misma tipografía que el título */
+  font-size: 0.85rem; /* Más pequeño para caber en una línea */
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap; /* Fuerza a una sola fila */
+  z-index: 10;
+  pointer-events: none;
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.biodigital-btn {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--current-accent, var(--pure-white));
+  color: var(--bg-dark);
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 10;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.biodigital-btn:hover {
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 0 15px var(--current-accent, var(--glow-white));
+}
+
+.axis-line {
+  stroke: var(--axis-line);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+.organ-pointer {
+  fill: none;
+  stroke: var(--axis-line);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Órganos Interactivos con MÁSCARA SVG */
+.organ-img, .organ {
+  fill: rgba(255, 255, 255, 0.85); /* Color blanco/claro para contrastar con la silueta gris oscura */
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3)); /* Sombra oscura para delinear el borde del órgano */
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* El glow adopta el color asignado desde JS a --organ-color */
+.organ:hover {
+  fill: var(--organ-color, #0f172a);
+  filter: drop-shadow(0 0 6px var(--organ-color, var(--glow-white)));
+}
+
+.organ.active, .organ-img.active {
+  fill: var(--organ-color, #0f172a);
+  filter: drop-shadow(0 0 12px var(--organ-color, var(--pure-white)));
+}
+
+.organ-hitbox {
+  fill: transparent;
+  stroke: transparent;
+}
+.organ-hitbox:hover {
+  fill: transparent;
+}
+.organ-hitbox.active {
+  fill: transparent;
+}
+
+.organ:hover + .organ-ui .organ-pointer,
+.organ.active + .organ-ui .organ-pointer,
+.organ-hitbox.active + .organ-ui .organ-pointer,
+.organ-hitbox:hover + .organ-ui .organ-pointer {
+  opacity: 1;
+  stroke: var(--organ-color, var(--pure-white));
+  stroke-width: 1.5;
+}
+
+.organ-label {
+  fill: var(--organ-color, var(--pure-white));
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.organ:hover + .organ-ui .organ-label,
+.organ.active + .organ-ui .organ-label,
+.organ-hitbox.active + .organ-ui .organ-label,
+.organ-hitbox:hover + .organ-ui .organ-label {
+  opacity: 1;
+}
+
+/* Animated Hormonal Axes */
+.axis-path {
+  fill: none;
+  stroke: var(--current-accent, #94a3b8);
+  stroke-width: 2.5;
+  stroke-dasharray: 8 4;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 3px var(--current-accent));
+  animation: flowLine 20s linear infinite;
+  transition: opacity 0.5s ease;
+}
+.axis-path.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes flowLine {
+  to {
+    stroke-dashoffset: -400;
+  }
+}
+
+/* Columna Derecha: Panel de Información */
+.info-panel {
+  width: 450px;
+  background-color: var(--bg-panel);
+  padding: 2.5rem;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-state.hidden {
+  display: none;
+}
+
+#default-state {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.target-icon {
+  color: var(--pure-white);
+  margin-bottom: 1.5rem;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+#default-state h2 {
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: var(--pure-white);
+}
+
+#default-state p {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Estado con Datos */
+.panel-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(0,0,0,0.03);
+  color: var(--current-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  border: 1px solid var(--current-accent);
+  margin-bottom: 1rem;
+  transition: all 0.5s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.panel-header h2 {
+  font-size: 1.8rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--pure-white);
+}
+
+.data-group {
+  margin-bottom: 2rem;
+  flex-shrink: 0;
+}
+
+.data-group h3 {
+  font-size: 0.85rem;
+  color: var(--current-accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: color 0.5s ease;
+}
+
+.data-group p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+  font-weight: 300;
+}
+
+.synthesis-group {
+  flex-grow: 1;
+}
+
+.hormone-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hormone-item {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.5s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hormone-item:hover {
+  border-color: var(--current-accent);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.hormone-header {
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.hormone-name {
+  color: var(--pure-white);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.hormone-icon {
+  color: var(--current-accent);
+  margin-right: 1.2rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), color 0.5s ease;
+}
+
+.hormone-details {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 1.5rem;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-top: 1px solid transparent;
+}
+
+.hormone-details p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  padding-bottom: 1.2rem;
+  margin: 0;
+}
+
+/* Estado Expandido */
+.hormone-item.expanded {
+  background: var(--bg-dark);
+  border-color: var(--current-accent);
+}
+
+.hormone-item.expanded .hormone-icon {
+  transform: rotate(90deg);
+}
+
+.hormone-item.expanded .hormone-details {
+  max-height: 200px; /* Suficiente para el texto */
+  opacity: 1;
+  padding-top: 1.2rem;
+  border-top-color: var(--border-color);
+}
+
+/* Reset Button */
+.reset-btn {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.8rem 1.2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  z-index: 100;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.reset-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--current-accent);
+  color: var(--current-accent);
+}
+
+.reset-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+}
+
+/* Gender Toggle Switch */
+.gender-toggle {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 100;
+  background: #bae6fd; /* Azul claro */
+  padding: 0.8rem 1.2rem;
+  border-radius: 4px;
+  border: 1px solid #7dd3fc;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.toggle-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-label.active {
+  color: #1e3a8a; /* Azul marino para contraste */
+  text-shadow: none;
+}
+
+.toggle-track {
+  width: 50px;
+  height: 24px;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+}
+
+.toggle-thumb {
+  width: 18px;
+  height: 18px;
+  background: #1e3a8a; /* Azul marino */
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 0 10px rgba(30, 58, 138, 0.5); /* Sombra azul para encajar */
+}
+
+body.gender-female .toggle-thumb {
+  transform: translateX(24px);
+}
+
+/* --- TABS Y CONTEXTO (RÚBRICA) --- */
+.panel-tabs {
+  display: flex;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 1rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.8rem 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--pure-white);
+}
+
+.tab-btn.active {
+  color: var(--current-accent);
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--current-accent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease, background-color 0.5s ease;
+  transform-origin: left;
+}
+
+.tab-btn.active::after {
+  transform: scaleX(1);
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.context-image-container {
+  width: 100%;
+  height: auto; /* Permite que el contenedor crezca según la imagen */
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  background-color: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.context-image-container img {
+  width: 100%;
+  height: auto; /* Mantiene la proporción natural de la imagen al 100% del ancho */
+  object-fit: contain;
+  display: block;
+}
+
+.context-title {
+  color: var(--current-accent) !important;
+  font-size: 0.85rem !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  body {
+    overflow-y: auto;
+  }
+  .dashboard {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .info-panel {
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    min-height: 40vh;
+  }
+  #anatomy-svg {
+    height: 60vh;
+  }
+}
+
+/* Intro Modal Overlay */
+.intro-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.95); /* Color oscuro semi-transparente */
+  backdrop-filter: blur(25px); /* Difuminado intenso para que no se lea atrás */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.intro-modal.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.intro-image-container {
+  max-width: 90vw;
+  max-height: 75vh;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Para que la imagen se vea completa sin cortarse */
+}
+
+.intro-btn {
+  background-color: #e0f2fe; /* Azul claro */
+  color: #1e3a8a; /* Azul marino */
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  padding: 1.2rem 3rem;
+  border: 3px solid transparent;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(186, 230, 253, 0.7);
+  animation: pulse-border 2s infinite;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.intro-btn:hover {
+  transform: scale(1.05);
+  background-color: #bae6fd;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(186, 230, 253, 0.8); }
+  70% { box-shadow: 0 0 0 25px rgba(186, 230, 253, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(186, 230, 253, 0); }
+}
+
+#btn-other-systems {
+  background-color: #bae6fd !important; /* Azul claro */
+  color: #1e3a8a !important; /* Azul marino */
+  border: 2px solid #7dd3fc;
+}
+#btn-other-systems:hover {
+  background-color: #7dd3fc !important;
+}
