@@ -713,6 +713,16 @@ body.gender-female .toggle-thumb {
   100% { box-shadow: 0 0 0 0 rgba(186, 230, 253, 0); }
 }
 
+.intro-subtitle {
+  margin-top: 1.5rem;
+  font-family: 'Outfit', sans-serif; /* Mismo tipo de letra del botón */
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #e0f2fe; /* Azul claro del botón: legible sobre el fondo oscuro del modal */
+  text-align: center;
+  cursor: pointer;
+}
+
 #btn-other-systems {
   background-color: #bae6fd !important; /* Azul claro */
   color: #1e3a8a !important; /* Azul marino */
