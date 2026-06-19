@@ -297,7 +297,7 @@ body.gender-female .male-only {
   justify-content: center;
   align-items: center;
   text-align: center;
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .target-icon {
