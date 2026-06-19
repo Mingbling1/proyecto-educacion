@@ -321,7 +321,7 @@ body.gender-female .male-only {
 #default-state p {
   font-size: 0.85rem;
   line-height: 1.6;
-  color: var(--text-muted);
+  color: var(--text-main);
 }
 
 /* Estado con Datos */
