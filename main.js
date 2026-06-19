@@ -291,12 +291,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Intro Modal Logic
   const introModal = document.getElementById("intro-modal");
   const btnStartSim = document.getElementById("btn-start-sim");
-  const introHint = document.getElementById("intro-hint");
 
   if (btnStartSim && introModal) {
-    const dismissIntro = () => introModal.classList.add("hidden");
-    btnStartSim.addEventListener("click", dismissIntro);
-    if (introHint) introHint.addEventListener("click", dismissIntro);
+    btnStartSim.addEventListener("click", () => {
+      introModal.classList.add("hidden");
+    });
   }
 
   // Set default gender
